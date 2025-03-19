@@ -46,7 +46,7 @@ export interface AnalyticsSummary {
 const createMockUser = (): User => ({
   id: faker.string.uuid(),
   name: faker.person.fullName(),
-  username: faker.internet.userName().toLowerCase(),
+  username: faker.internet.username().toLowerCase(),
   avatar: faker.image.avatar(),
   isVerified: faker.datatype.boolean(0.2),
 });
@@ -66,7 +66,7 @@ const createMockAISuggestion = (): AISuggestion => {
     id: faker.string.uuid(),
     text: faker.lorem.sentence(faker.number.int({ min: 5, max: 15 })),
     type: types[faker.number.int({ min: 0, max: 2 })],
-    score: faker.number.float({ min: 0.7, max: 0.99, precision: 0.01 }),
+    score: Number((faker.number.float({ min: 0.7, max: 0.99, fractionDigits: 2 })).toFixed(2)),
   };
 };
 
@@ -114,10 +114,10 @@ export const generateMockData = () => {
     conversations,
     analytics: {
       totalMessages: faker.number.int({ min: 120, max: 500 }),
-      responseRate: faker.number.float({ min: 0.6, max: 0.95, precision: 0.01 }),
+      responseRate: Number((faker.number.float({ min: 0.6, max: 0.95, fractionDigits: 2 })).toFixed(2)),
       averageResponseTime: faker.number.int({ min: 5, max: 120 }),
-      engagementScore: faker.number.float({ min: 0.5, max: 0.9, precision: 0.01 }),
-      messageGrowth: faker.number.float({ min: -0.1, max: 0.3, precision: 0.01 }),
+      engagementScore: Number((faker.number.float({ min: 0.5, max: 0.9, fractionDigits: 2 })).toFixed(2)),
+      messageGrowth: Number((faker.number.float({ min: -0.1, max: 0.3, fractionDigits: 2 })).toFixed(2)),
     },
   };
 };
