@@ -1,0 +1,138 @@
+
+import { faker } from '@faker-js/faker';
+
+// Types
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  avatar: string;
+  isVerified: boolean;
+}
+
+export interface Message {
+  id: string;
+  sender: User;
+  content: string;
+  timestamp: Date;
+  read: boolean;
+  isOwn: boolean;
+}
+
+export interface Conversation {
+  id: string;
+  participant: User;
+  messages: Message[];
+  lastMessageAt: Date;
+  unreadCount: number;
+}
+
+export interface AISuggestion {
+  id: string;
+  text: string;
+  type: 'simple' | 'question' | 'follow-up';
+  score: number;
+}
+
+export interface AnalyticsSummary {
+  totalMessages: number;
+  responseRate: number;
+  averageResponseTime: number;
+  engagementScore: number;
+  messageGrowth: number;
+}
+
+// Generate mock data
+const createMockUser = (): User => ({
+  id: faker.string.uuid(),
+  name: faker.person.fullName(),
+  username: faker.internet.userName().toLowerCase(),
+  avatar: faker.image.avatar(),
+  isVerified: faker.datatype.boolean(0.2),
+});
+
+const createMockMessage = (sender: User, isOwn: boolean = false): Message => ({
+  id: faker.string.uuid(),
+  sender,
+  content: faker.lorem.sentence(faker.number.int({ min: 3, max: 15 })),
+  timestamp: faker.date.recent({ days: 7 }),
+  read: faker.datatype.boolean(0.7),
+  isOwn,
+});
+
+const createMockAISuggestion = (): AISuggestion => {
+  const types: AISuggestion['type'][] = ['simple', 'question', 'follow-up'];
+  return {
+    id: faker.string.uuid(),
+    text: faker.lorem.sentence(faker.number.int({ min: 5, max: 15 })),
+    type: types[faker.number.int({ min: 0, max: 2 })],
+    score: faker.number.float({ min: 0.7, max: 0.99, precision: 0.01 }),
+  };
+};
+
+const createMockConversation = (): Conversation => {
+  const participant = createMockUser();
+  const messageCount = faker.number.int({ min: 3, max: 15 });
+  const messages: Message[] = [];
+  
+  for (let i = 0; i < messageCount; i++) {
+    const isOwn = faker.datatype.boolean(0.4);
+    const sender = isOwn ? { 
+      id: 'self', 
+      name: 'Me', 
+      username: 'me', 
+      avatar: '/placeholder.svg', 
+      isVerified: false 
+    } : participant;
+    
+    messages.push(createMockMessage(sender, isOwn));
+  }
+  
+  messages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+  
+  const unreadCount = messages.filter(m => !m.read && !m.isOwn).length;
+  
+  return {
+    id: faker.string.uuid(),
+    participant,
+    messages,
+    lastMessageAt: messages[messages.length - 1].timestamp,
+    unreadCount,
+  };
+};
+
+export const generateMockData = () => {
+  const conversations: Conversation[] = [];
+  
+  for (let i = 0; i < 12; i++) {
+    conversations.push(createMockConversation());
+  }
+  
+  conversations.sort((a, b) => b.lastMessageAt.getTime() - a.lastMessageAt.getTime());
+  
+  return {
+    conversations,
+    analytics: {
+      totalMessages: faker.number.int({ min: 120, max: 500 }),
+      responseRate: faker.number.float({ min: 0.6, max: 0.95, precision: 0.01 }),
+      averageResponseTime: faker.number.int({ min: 5, max: 120 }),
+      engagementScore: faker.number.float({ min: 0.5, max: 0.9, precision: 0.01 }),
+      messageGrowth: faker.number.float({ min: -0.1, max: 0.3, precision: 0.01 }),
+    },
+  };
+};
+
+// Generate and export mock data for use in components
+export const mockData = generateMockData();
+
+// Function to generate AI suggestions for a message
+export const getAiSuggestionsForMessage = (message: string): AISuggestion[] => {
+  const suggestions: AISuggestion[] = [];
+  const count = faker.number.int({ min: 2, max: 4 });
+  
+  for (let i = 0; i < count; i++) {
+    suggestions.push(createMockAISuggestion());
+  }
+  
+  return suggestions;
+};
