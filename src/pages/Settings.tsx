@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Settings as SettingsIcon, User, Bell, Shield, MessageSquare, Check, Instagram, Loader2 } from 'lucide-react';
 import Dashboard from '@/components/layout/Dashboard';
@@ -9,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
 
 const SettingsSection: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode }> = ({ 
   title, 
@@ -45,25 +45,6 @@ const SettingsRow: React.FC<{
         {children}
       </div>
     </div>
-  );
-};
-
-const Switch: React.FC<{ checked: boolean; onChange: () => void }> = ({ checked, onChange }) => {
-  return (
-    <button
-      className={cn(
-        "relative inline-flex items-center rounded-full transition-colors w-11 h-6 focus:outline-none",
-        checked ? "bg-primary" : "bg-muted"
-      )}
-      onClick={onChange}
-    >
-      <span
-        className={cn(
-          "inline-block w-4 h-4 transform bg-white rounded-full transition-transform",
-          checked ? "translate-x-6" : "translate-x-1"
-        )}
-      />
-    </button>
   );
 };
 
@@ -328,21 +309,21 @@ const Settings = () => {
               title="AI Message Suggestions"
               description="Get AI-powered suggestions for responses"
             >
-              <Switch checked={aiSuggestions} onChange={() => setAiSuggestions(!aiSuggestions)} />
+              <Switch checked={aiSuggestions} onCheckedChange={setAiSuggestions} />
             </SettingsRow>
             
             <SettingsRow
               title="Sentiment Analysis"
               description="Analyze the sentiment and tone of messages"
             >
-              <Switch checked={sentimentAnalysis} onChange={() => setSentimentAnalysis(!sentimentAnalysis)} />
+              <Switch checked={sentimentAnalysis} onCheckedChange={setSentimentAnalysis} />
             </SettingsRow>
             
             <SettingsRow
               title="Message Prioritization"
               description="Automatically prioritize important messages"
             >
-              <Switch checked={prioritization} onChange={() => setPrioritization(!prioritization)} />
+              <Switch checked={prioritization} onCheckedChange={setPrioritization} />
             </SettingsRow>
           </SettingsSection>
           
@@ -351,14 +332,14 @@ const Settings = () => {
               title="Push Notifications"
               description="Receive notifications for new messages"
             >
-              <Switch checked={notifications} onChange={() => setNotifications(!notifications)} />
+              <Switch checked={notifications} onCheckedChange={setNotifications} />
             </SettingsRow>
             
             <SettingsRow
               title="Email Notifications"
               description="Receive email updates for important messages"
             >
-              <Switch checked={emailNotifications} onChange={() => setEmailNotifications(!emailNotifications)} />
+              <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
             </SettingsRow>
           </SettingsSection>
           
