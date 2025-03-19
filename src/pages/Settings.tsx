@@ -1,144 +1,17 @@
+
 import React, { useState } from 'react';
-import { Settings as SettingsIcon, User, Bell, Shield, MessageSquare, Check, Instagram, Loader2 } from 'lucide-react';
+import { Settings as SettingsIcon, User, Bell, Shield, MessageSquare } from 'lucide-react';
 import Dashboard from '@/components/layout/Dashboard';
 import AnimatedTransition from '@/components/ui/AnimatedTransition';
-import { cn } from '@/lib/utils';
 import { InstagramAccount, mockInstagramApi } from '@/services/mockData';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
-
-const SettingsSection: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode }> = ({ 
-  title, 
-  icon,
-  children 
-}) => {
-  return (
-    <div className="glass-panel mb-8">
-      <div className="border-b p-6">
-        <h2 className="text-lg font-semibold flex items-center">
-          {icon}
-          <span className="ml-2">{title}</span>
-        </h2>
-      </div>
-      <div className="p-6">
-        {children}
-      </div>
-    </div>
-  );
-};
-
-const SettingsRow: React.FC<{ 
-  title: string; 
-  description?: string;
-  children: React.ReactNode;
-}> = ({ title, description, children }) => {
-  return (
-    <div className="flex items-start justify-between py-4 border-b last:border-b-0">
-      <div>
-        <h3 className="font-medium">{title}</h3>
-        {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
-      </div>
-      <div className="ml-4">
-        {children}
-      </div>
-    </div>
-  );
-};
-
-const InstagramConnectionSection: React.FC<{
-  instagramAccount: InstagramAccount | null;
-  onConnect: () => void;
-  onDisconnect: () => void;
-  onSync: () => void;
-  isConnecting: boolean;
-  isSyncing: boolean;
-}> = ({ 
-  instagramAccount, 
-  onConnect, 
-  onDisconnect, 
-  onSync,
-  isConnecting,
-  isSyncing
-}) => {
-  return (
-    <div className="glass-panel mb-8">
-      <div className="border-b p-6">
-        <h2 className="text-lg font-semibold flex items-center">
-          <Instagram className="w-5 h-5" />
-          <span className="ml-2">Instagram Connection</span>
-        </h2>
-      </div>
-      <div className="p-6">
-        {instagramAccount ? (
-          <div>
-            <div className="flex items-center mb-6">
-              <img src={instagramAccount.avatar} alt={instagramAccount.username} className="w-16 h-16 rounded-full mr-4" />
-              <div>
-                <h3 className="font-semibold text-lg">{instagramAccount.fullName}</h3>
-                <p className="text-muted-foreground">@{instagramAccount.username}</p>
-                <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
-                  <span>{instagramAccount.followers.toLocaleString()} followers</span>
-                  <span>{instagramAccount.following.toLocaleString()} following</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex gap-3">
-              <Button 
-                variant="outline" 
-                onClick={onSync} 
-                disabled={isSyncing}
-              >
-                {isSyncing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Syncing...
-                  </>
-                ) : (
-                  "Sync Messages"
-                )}
-              </Button>
-              <Button 
-                variant="destructive" 
-                onClick={onDisconnect}
-                disabled={isSyncing}
-              >
-                Disconnect
-              </Button>
-            </div>
-            
-            <div className="mt-4 text-sm text-muted-foreground">
-              {instagramAccount.lastSynced && (
-                <p>Last synced: {instagramAccount.lastSynced.toLocaleString()}</p>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-6">
-            <Instagram className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="font-medium mb-2">Connect Instagram Account</h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              Connect your Instagram account to manage direct messages
-            </p>
-            <Button onClick={onConnect} disabled={isConnecting}>
-              {isConnecting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Connecting...
-                </>
-              ) : (
-                "Connect Instagram"
-              )}
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+import SettingsSection from '@/components/settings/SettingsSection';
+import SettingsRow from '@/components/settings/SettingsRow';
+import InstagramConnectionSection from '@/components/settings/InstagramConnectionSection';
 
 const Settings = () => {
   const { toast } = useToast();
@@ -274,7 +147,7 @@ const Settings = () => {
               <div className="flex items-center">
                 {accountConnected ? (
                   <button className="bg-secondary text-secondary-foreground text-sm px-3 py-1.5 rounded-md flex items-center">
-                    <Check className="w-4 h-4 mr-1.5 text-green-600" />
+                    <span className="mr-1.5 text-green-600">✓</span>
                     Connected
                   </button>
                 ) : (
@@ -412,7 +285,7 @@ const Settings = () => {
             <Button onClick={handleConnect} disabled={isConnecting}>
               {isConnecting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span className="mr-2 animate-spin">◌</span>
                   Connecting...
                 </>
               ) : (
