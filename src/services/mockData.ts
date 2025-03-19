@@ -42,6 +42,17 @@ export interface AnalyticsSummary {
   messageGrowth: number;
 }
 
+export interface InstagramAccount {
+  id: string;
+  username: string;
+  avatar: string;
+  fullName: string;
+  followers: number;
+  following: number;
+  isConnected: boolean;
+  lastSynced: Date | null;
+}
+
 // Generate mock data
 const createMockUser = (): User => ({
   id: faker.string.uuid(),
@@ -135,4 +146,54 @@ export const getAiSuggestionsForMessage = (message: string): AISuggestion[] => {
   }
   
   return suggestions;
+};
+
+// Function to create a mock Instagram account
+export const createMockInstagramAccount = (): InstagramAccount => ({
+  id: faker.string.uuid(),
+  username: faker.internet.userName().toLowerCase(),
+  avatar: faker.image.avatar(),
+  fullName: faker.person.fullName(),
+  followers: faker.number.int({ min: 100, max: 10000 }),
+  following: faker.number.int({ min: 50, max: 1000 }),
+  isConnected: false,
+  lastSynced: null,
+});
+
+// Mock Instagram API functions
+export const mockInstagramApi = {
+  connectAccount: (username: string, password: string): Promise<InstagramAccount> => {
+    return new Promise((resolve, reject) => {
+      // Simulate API call
+      setTimeout(() => {
+        if (username && password) {
+          const account = createMockInstagramAccount();
+          account.username = username;
+          account.isConnected = true;
+          account.lastSynced = new Date();
+          resolve(account);
+        } else {
+          reject(new Error('Invalid credentials'));
+        }
+      }, 1500);
+    });
+  },
+  
+  disconnectAccount: (accountId: string): Promise<void> => {
+    return new Promise((resolve) => {
+      // Simulate API call
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  },
+  
+  syncMessages: (accountId: string): Promise<void> => {
+    return new Promise((resolve) => {
+      // Simulate API call
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+  }
 };
