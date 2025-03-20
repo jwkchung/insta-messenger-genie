@@ -3,18 +3,17 @@ import React, { useState } from 'react';
 import { Settings as SettingsIcon, User, Bell, Shield, MessageSquare } from 'lucide-react';
 import Dashboard from '@/components/layout/Dashboard';
 import AnimatedTransition from '@/components/ui/AnimatedTransition';
-import { InstagramAccount, mockInstagramApi } from '@/services/mockData';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import SettingsSection from '@/components/settings/SettingsSection';
 import SettingsRow from '@/components/settings/SettingsRow';
 import InstagramConnectionSection from '@/components/settings/InstagramConnectionSection';
+import { useInstagramConnection } from '@/hooks/useInstagramConnection';
 
 const Settings = () => {
-  const { toast } = useToast();
+  // Feature toggles
   const [accountConnected, setAccountConnected] = React.useState(true);
   const [aiSuggestions, setAiSuggestions] = React.useState(true);
   const [sentimentAnalysis, setSentimentAnalysis] = React.useState(true);
@@ -22,99 +21,22 @@ const Settings = () => {
   const [notifications, setNotifications] = React.useState(true);
   const [emailNotifications, setEmailNotifications] = React.useState(false);
   
-  // Instagram connection states
-  const [instagramAccount, setInstagramAccount] = useState<InstagramAccount | null>(null);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  
-  // Instagram connection handlers
-  const handleOpenConnectDialog = () => {
-    setLoginDialogOpen(true);
-  };
-  
-  const handleConnect = async () => {
-    if (!username || !password) {
-      toast({
-        title: "Error",
-        description: "Please enter both username and password",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsConnecting(true);
-    
-    try {
-      const account = await mockInstagramApi.connectAccount(username, password);
-      setInstagramAccount(account);
-      toast({
-        title: "Success",
-        description: "Instagram account connected successfully",
-      });
-      setLoginDialogOpen(false);
-      setUsername('');
-      setPassword('');
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to connect Instagram account. Please check your credentials.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsConnecting(false);
-    }
-  };
-  
-  const handleDisconnect = async () => {
-    if (!instagramAccount) return;
-    
-    try {
-      await mockInstagramApi.disconnectAccount(instagramAccount.id);
-      setInstagramAccount(null);
-      toast({
-        title: "Success",
-        description: "Instagram account disconnected",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to disconnect Instagram account",
-        variant: "destructive",
-      });
-    }
-  };
-  
-  const handleSync = async () => {
-    if (!instagramAccount) return;
-    
-    setIsSyncing(true);
-    
-    try {
-      await mockInstagramApi.syncMessages(instagramAccount.id);
-      
-      // Update last synced time
-      setInstagramAccount({
-        ...instagramAccount,
-        lastSynced: new Date()
-      });
-      
-      toast({
-        title: "Success",
-        description: "Messages synced successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sync messages",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSyncing(false);
-    }
-  };
+  // Instagram connection logic from custom hook
+  const {
+    instagramAccount,
+    isConnecting,
+    isSyncing,
+    loginDialogOpen,
+    username,
+    password,
+    setLoginDialogOpen,
+    setUsername,
+    setPassword,
+    handleOpenConnectDialog,
+    handleConnect,
+    handleDisconnect,
+    handleSync
+  } = useInstagramConnection();
 
   return (
     <AnimatedTransition>
