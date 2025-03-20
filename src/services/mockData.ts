@@ -57,26 +57,75 @@ export interface InstagramAccount {
 const createMockUser = (): User => ({
   id: faker.string.uuid(),
   name: faker.person.fullName(),
-  username: faker.internet.username().toLowerCase(),
+  username: faker.internet.userName().toLowerCase(),
   avatar: faker.image.avatar(),
   isVerified: faker.datatype.boolean(0.2),
 });
 
-const createMockMessage = (sender: User, isOwn: boolean = false): Message => ({
-  id: faker.string.uuid(),
-  sender,
-  content: faker.lorem.sentence(faker.number.int({ min: 3, max: 15 })),
-  timestamp: faker.date.recent({ days: 7 }),
-  read: faker.datatype.boolean(0.7),
-  isOwn,
-});
+const createMockMessage = (sender: User, isOwn: boolean = false): Message => {
+  // Create realistic message content in English
+  const messageTemplates = [
+    "Hey, how are you doing today?",
+    "Did you see that new post?",
+    "Thanks for your help yesterday!",
+    "What time are we meeting tomorrow?",
+    "I just sent you the file you requested.",
+    "Can we reschedule our call?",
+    "Looking forward to working with you.",
+    "Let me know when you're available to chat.",
+    "I really liked your recent photos!",
+    "Have you checked out that new restaurant?",
+    "Just got back from vacation, it was amazing!",
+    "Sorry for the late reply, I've been busy.",
+    "Are you coming to the event this weekend?",
+    "Could you give me some feedback on my latest post?",
+    "I'd like to collaborate with you on a project."
+  ];
+  
+  return {
+    id: faker.string.uuid(),
+    sender,
+    content: faker.helpers.arrayElement(messageTemplates),
+    timestamp: faker.date.recent({ days: 7 }),
+    read: faker.datatype.boolean(0.7),
+    isOwn,
+  };
+};
 
 const createMockAISuggestion = (): AISuggestion => {
   const types: AISuggestion['type'][] = ['simple', 'question', 'follow-up'];
+  
+  // Create realistic AI suggestions in English
+  const suggestionsByType = {
+    simple: [
+      "Thanks for reaching out!",
+      "I appreciate your message.",
+      "Great to hear from you!",
+      "Thanks for sharing that with me.",
+      "I understand what you mean."
+    ],
+    question: [
+      "When would be a good time to discuss this further?",
+      "What specific features are you looking for?",
+      "How did you hear about our services?",
+      "Would you like me to send you more information?",
+      "Can you provide more details about your requirements?"
+    ],
+    'follow-up': [
+      "I'll follow up with you next week about this.",
+      "Let's schedule a call to discuss the next steps.",
+      "I'll send you the proposal by tomorrow.",
+      "Would it be helpful if I shared some examples?",
+      "Should we include your team in our next discussion?"
+    ]
+  };
+  
+  const type = types[faker.number.int({ min: 0, max: 2 })];
+  
   return {
     id: faker.string.uuid(),
-    text: faker.lorem.sentence(faker.number.int({ min: 5, max: 15 })),
-    type: types[faker.number.int({ min: 0, max: 2 })],
+    text: faker.helpers.arrayElement(suggestionsByType[type]),
+    type,
     score: Number((faker.number.float({ min: 0.7, max: 0.99, fractionDigits: 2 })).toFixed(2)),
   };
 };
