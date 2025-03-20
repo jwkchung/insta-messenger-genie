@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageSquare, BarChart2, Home, Settings } from 'lucide-react';
+import { MessageSquare, BarChart2, Home, Settings, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Header: React.FC = () => {
@@ -11,6 +11,7 @@ const Header: React.FC = () => {
     { path: '/', label: 'Dashboard', icon: Home },
     { path: '/messages', label: 'Messages', icon: MessageSquare },
     { path: '/analytics', label: 'Analytics', icon: BarChart2 },
+    { path: '/customgpt', label: 'Custom GPTs', icon: Sparkles },
     { path: '/settings', label: 'Settings', icon: Settings },
   ];
 
